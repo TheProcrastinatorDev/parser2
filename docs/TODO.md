@@ -26,7 +26,6 @@ TAGS:
 - [ ] Verify Sail containers are running: `sail ps` `#setup`
 - [ ] Run existing tests: `sail artisan test` (if any) `#test`
 - [ ] Verify Traefik access: https://dev.parser2.local `#setup`
-- [ ] Install L5-Swagger package for OpenAPI documentation `#setup`
 
 ---
 
@@ -95,11 +94,6 @@ TAGS:
   - [ ] GET /api/results/export - Export results
 
 ### OpenAPI/Swagger Documentation
-
-- [ ] Configure L5-Swagger package `#docs` `#setup`
-  - [ ] Publish configuration
-  - [ ] Configure API route `/api/documentation`
-  - [ ] Setup authentication in Swagger UI
 
 - [ ] Add OpenAPI annotations to all API endpoints `#docs`
   - [ ] Campaign endpoints annotations
@@ -192,6 +186,10 @@ TAGS:
 ## ✅ Completed (This Sprint)
 
 - [x] ~~Create project documentation structure~~ `#setup` ✓ 2025-11-08
+- [x] ~~Install and configure L5-Swagger package~~ `#setup` `#docs` ✓ 2025-11-08
+- [x] ~~Install Laravel Debugbar~~ `#setup` ✓ 2025-11-08
+- [x] ~~Add OpenAPI base annotations to Controller~~ `#docs` ✓ 2025-11-08
+- [x] ~~Create example Health Check API endpoint~~ `#feature` ✓ 2025-11-08
 
 ---
 
@@ -199,7 +197,6 @@ TAGS:
 
 ### Blockers
 
-- Need to install L5-Swagger package before OpenAPI documentation work
 - Database schema needs finalization before migrations
 - DTO pattern needs to be standardized before implementing all services
 
@@ -239,6 +236,14 @@ chore: install l5-swagger package
 - toArray() for serialization
 - Type-safe properties
 
+**Swagger/OpenAPI Documentation:**
+- Access: https://dev.parser2.local/api/documentation
+- Auto-regenerates in development (L5_SWAGGER_GENERATE_ALWAYS=true)
+- Add @OA annotations to all new API endpoints
+- Regenerate manually: `sail artisan l5-swagger:generate`
+- **IMPORTANT:** Always update Swagger docs when changing API endpoints, request/response schemas, or DTOs
+- Example Health Check endpoint: `GET /api/health`
+
 ---
 
 ## 📊 Sprint Metrics
@@ -260,3 +265,4 @@ chore: install l5-swagger package
 - [ ] Run full test suite before merging to master
 - [ ] Review parser v1 for additional patterns to adopt
 - [ ] Update CHANGELOG.md for user-facing changes
+- [ ] Regenerate Swagger docs after API changes: `sail artisan l5-swagger:generate`
