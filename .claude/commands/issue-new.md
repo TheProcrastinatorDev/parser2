@@ -22,6 +22,50 @@ Act as a principal-level engineer who creates implementation plans that an auton
 - Be thorough and methodical, don't overcomplicate, YAGNI and KISS
 - ALWAYS check existing documentation BEFORE planning
 
+### CRITICAL: Commit Message Format Requirements
+
+**MANDATORY FORMAT:** All commit messages MUST follow this exact format:
+
+```
+type: subject
+```
+
+**REQUIREMENTS:**
+1. **Type MUST be lowercase** - Use `feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:` (NOT `Feat:`, `Fix:`, `Refactor:`, etc.)
+2. **Subject uses imperative mood** - "add" not "added" or "adds"
+3. **No capital first letter in subject** - Start with lowercase
+4. **No period at end** - Omit trailing punctuation
+5. **Maximum 50 characters** for subject
+6. **Focus on WHAT and WHY**, not HOW
+
+**VALID TYPES (all lowercase):**
+- `feat` - New feature
+- `fix` - Bug fix
+- `test` - Tests
+- `docs` - Documentation
+- `refactor` - Code improvement without behavior change
+- `chore` - Maintenance (dependencies, config)
+
+**CORRECT EXAMPLES:**
+```bash
+feat: add data normalization service
+fix: resolve parser timeout in telegram service
+test: add normalization service tests
+docs: update API documentation with new endpoints
+refactor: extract DTO base class
+chore: update laravel to 12.1
+```
+
+**INCORRECT EXAMPLES (DO NOT USE):**
+```bash
+Feat: add data normalization service        # ❌ Capitalized type
+feat: Added data normalization service      # ❌ Past tense, capital letter
+feat: Add data normalization service.       # ❌ Capital letter, period
+refactor: Rename DTOs to use DTO suffix     # ❌ Capital letter in subject
+```
+
+**Reference:** See `CONTRIBUTING.md` lines 62-101 for complete commit format rules.
+
 ## Documentation Hierarchy to Check
 
 ### 1. Project Context Files (Check First)
@@ -378,6 +422,25 @@ Create `.scratchpads/{slug}.md` with comprehensive implementation tracking:
 - [ ] Add decision to docs/DECISIONS.md if architectural
 - [ ] Update CHANGELOG.md with user-facing changes
 
+### Phase 5: Commit Messages (CRITICAL - READ CAREFULLY)
+**Before committing, verify commit message format:**
+- [ ] Type is lowercase (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, `chore:`)
+- [ ] Type is NOT capitalized (NOT `Feat:`, `Fix:`, `Refactor:`, etc.)
+- [ ] Subject starts with lowercase letter
+- [ ] Subject uses imperative mood ("add" not "added")
+- [ ] No period at end of commit message
+- [ ] Subject is descriptive and under 50 characters
+
+**Example commit messages for this issue:**
+```bash
+feat: add parser service with DTO support
+test: add parser service unit tests
+docs: update API documentation with parser endpoints
+refactor: extract parser base class
+```
+
+**Reference:** See `CONTRIBUTING.md` section "Commit Message Format" (lines 62-101) for complete rules.
+
 ---
 
 ## Technical Decisions Log
@@ -426,9 +489,26 @@ Before marking as complete, verify against:
 - [ ] Uses quick-reference.md conventions
 
 ### From Git Workflow (git.md)
-- [ ] Commits follow format: `type: subject`
+- [ ] Commits follow format: `type: subject` (type MUST be lowercase: `feat:`, `fix:`, `refactor:`, etc.)
+- [ ] Commit subject uses imperative mood (e.g., "add" not "added")
+- [ ] Commit subject starts with lowercase letter (no capital first letter)
+- [ ] No period at end of commit message
 - [ ] Working on dev branch
 - [ ] Ready to merge to master
+
+**Commit Message Validation Checklist (MANDATORY):**
+- [ ] Type is one of: `feat`, `fix`, `test`, `docs`, `refactor`, `chore` (all lowercase)
+- [ ] Type is NOT capitalized (not `Feat:`, `Fix:`, `Refactor:`, etc.) - THIS IS CRITICAL
+- [ ] Subject starts with lowercase letter (not "Add" but "add")
+- [ ] Subject uses imperative mood ("add" not "added" or "adds")
+- [ ] No period at end of commit message
+- [ ] Subject is descriptive and under 50 characters
+
+**Common Mistakes to Avoid:**
+- ❌ `Refactor: Rename DTOs` → ✅ `refactor: rename DTOs`
+- ❌ `Feat: Add service` → ✅ `feat: add service`
+- ❌ `fix: Fix bug` → ✅ `fix: resolve bug`
+- ❌ `docs: Updated docs.` → ✅ `docs: update documentation`
 
 ---
 
@@ -489,6 +569,10 @@ Closes #{issue_number}
 - [ ] Meets Definition of Done (docs/PLAN.md)
 - [ ] No items from CLAUDE.md Don'ts
 - [ ] Commit format correct (CONTRIBUTING.md)
+  - [ ] Type is lowercase (`feat:`, `fix:`, `refactor:`, etc. - NOT `Feat:`, `Fix:`, `Refactor:`)
+  - [ ] Subject starts with lowercase letter
+  - [ ] Subject uses imperative mood
+  - [ ] No period at end
 ```
 
 ---
