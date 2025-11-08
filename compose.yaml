@@ -1,0 +1,97 @@
+services:
+    laravel.test:
+        build:
+            context: './vendor/laravel/sail/runtimes/8.4'
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        image: 'sail-8.4/app'
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${APP_PORT:-80}:80'
+            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+            IGNITION_LOCAL_SITES_PATH: '${PWD}'
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
+            - traefik-dev
+        labels:
+            - "traefik.enable=true"
+
+            # Main application
+            - "traefik.http.routers.parser2.rule=Host(`dev.parser2.local`)"
+            - "traefik.http.routers.parser2.entrypoints=websecure"
+            - "traefik.http.routers.parser2.tls=true"
+            - "traefik.http.routers.parser2.service=parser2"
+            - "traefik.http.services.parser2.loadbalancer.server.port=80"
+
+            # Vite Development Server
+            - "traefik.http.routers.parser2-vite.rule=Host(`dev.parser2.local`) && (PathPrefix(`/@`) || PathPrefix(`/resources`) || PathPrefix(`/node_modules`) || (PathPrefix(`/vendor`) && !PathPrefix(`/vendor/telescope`)))"
+            - "traefik.http.routers.parser2-vite.entrypoints=websecure"
+            - "traefik.http.routers.parser2-vite.tls=true"
+            - "traefik.http.routers.parser2-vite.service=parser2-vite-service"
+            - "traefik.http.services.parser2-vite-service.loadbalancer.server.port=5173"
+
+            - "traefik.docker.network=traefik-dev"
+        depends_on:
+            - mysql
+            - redis
+    mysql:
+        image: 'mysql/mysql-server:8.0'
+        ports:
+            - '${FORWARD_DB_PORT:-3306}:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: '${DB_DATABASE}'
+            MYSQL_USER: '${DB_USERNAME}'
+            MYSQL_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+            MYSQL_EXTRA_OPTIONS: '${MYSQL_EXTRA_OPTIONS}'
+        volumes:
+            - 'sail-mysql:/var/lib/mysql'
+            - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
+        networks:
+            - sail
+            - traefik-dev
+        healthcheck:
+            test:
+                - CMD
+                - mysqladmin
+                - ping
+                - '-p${DB_PASSWORD}'
+            retries: 3
+            timeout: 5s
+    redis:
+        image: 'redis:alpine'
+        ports:
+            - '${FORWARD_REDIS_PORT:-6379}:6379'
+        volumes:
+            - 'sail-redis:/data'
+        networks:
+            - sail
+            - traefik-dev
+        healthcheck:
+            test:
+                - CMD
+                - redis-cli
+                - ping
+            retries: 3
+            timeout: 5s
+networks:
+    sail:
+        driver: bridge
+    traefik-dev:
+        external: true
+volumes:
+    sail-mysql:
+        driver: local
+    sail-redis:
+        driver: local
