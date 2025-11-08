@@ -442,6 +442,83 @@ Use **Pest PHP** as the primary testing framework.
 
 ---
 
+---
+
+## ADR-007: Adapt Parser v1 Architecture as Foundation
+
+**Date:** 2025-11-08
+**Status:** Accepted
+**Deciders:** Project Lead
+**Tags:** architecture, parser, code-reuse
+
+### Context
+
+parser2 needs to implement 8 different parser types (Feeds, Reddit, Single Page, Telegram, Medium, Bing, Multi-URL, Craigslist). Parser v1 (`/home/null/misc/apps/personal/parser`) has battle-tested implementations of these parsers that handle many edge cases.
+
+Two approaches considered:
+1. Build parsers from scratch with modern patterns
+2. Adapt parser v1 architecture with v2 improvements (DTOs, OpenAPI, better testing)
+
+### Decision
+
+**Adapt parser v1 architecture** as the foundation for parser2, with the following improvements:
+- Replace arrays with DTOs (ParseRequestDTO, ParseResultDTO)
+- Add comprehensive test coverage (>80%)
+- Implement OpenAPI documentation
+- Use dependency injection throughout
+- Add proper error handling and logging
+
+### Consequences
+
+#### Positive
+
+- ✅ **Proven patterns:** Parser v1 is battle-tested in production
+- ✅ **Edge cases handled:** HTTP retries, encoding issues, rate limiting already solved
+- ✅ **Faster development:** Focus on improvements, not reinventing wheel
+- ✅ **Lower risk:** Fewer unknown unknowns, proven to work
+- ✅ **Knowledge transfer:** Can reference v1 for complex logic
+
+#### Negative
+
+- ❌ **Legacy patterns:** Some v1 patterns need refactoring
+- ❌ **Learning curve:** Need to understand v1 code first
+- ❌ **Potential tech debt:** May carry over v1 assumptions
+
+#### Neutral
+
+- AbstractParser pattern provides good extensibility
+- ParserManager registration system is solid
+- Support services (HttpClient, ContentExtractor, RateLimiter) are well-designed
+
+### Alternatives Considered
+
+1. **Build from scratch**
+   - Pros: Clean slate, modern patterns from day 1
+   - Cons: Would miss v1's edge case handling, slower development
+   - Rejected because: Risk of missing production edge cases is too high
+
+### Implementation Notes
+
+- **Foundation built (Phase 1 complete):**
+  - AbstractParser base class with pagination, error handling
+  - ParserManager for registration/lookup
+  - HttpClient with retry logic (exponential backoff, 429/500/502/503/504)
+  - ContentExtractor with HTML cleaning, image extraction, URL fixing
+  - RateLimiter with per-minute/hour limits
+  - DTOs: ParseRequestDTO, ParseResultDTO (readonly, type-safe)
+
+- **P1 Parsers complete (Phase 2A):**
+  - FeedsParser: RSS/Atom/JSON with auto-detection
+  - RedditParser: JSON API with post type detection (text/image/video/link)
+  - SinglePageParser: CSS/XPath/auto extraction
+
+- **Reference parser v1 for:**
+  - Complex parsing logic
+  - Edge case handling
+  - Test data/fixtures
+
+---
+
 ## ADR Index
 
 | ID | Title | Status | Date | Tags |
@@ -452,3 +529,4 @@ Use **Pest PHP** as the primary testing framework.
 | 004 | Use OpenAPI/Swagger for API Docs | Accepted | 2025-11-08 | documentation, api |
 | 005 | Use Vue 3 + Inertia.js + TS | Accepted | 2025-11-08 | architecture, frontend |
 | 006 | Use Pest PHP for Testing | Accepted | 2025-11-08 | testing, code-quality |
+| 007 | Adapt Parser v1 Architecture | Accepted | 2025-11-08 | architecture, parser, code-reuse |
