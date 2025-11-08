@@ -49,7 +49,7 @@
 
 parser2 requires a complete parsing infrastructure that supports multiple data sources with a unified DTO-based architecture. Currently, the project has only foundational setup (L5-Swagger, Debugbar, Documentation) but lacks:
 
-- **Core DTOs:** 0 implemented (need ParseRequest, ParseResult, and parser-specific DTOs)
+- **Core DTOs:** 0 implemented (need ParseRequestDTO, ParseResultDTO, and parser-specific DTOs)
 - **Service Layer:** 0 services implemented (need ParserManager + 8 individual parsers)
 - **Parser Implementations:** 0 parsers (need 8 standalone parsers from v1)
 - **API Endpoints:** Only /api/health exists (need complete parser management API)
@@ -96,8 +96,8 @@ parser2 requires a complete parsing infrastructure that supports multiple data s
    - **RateLimiter** - Requests per minute/hour limits
 
 4. **DTOs:**
-   - **ParseRequest** - source, type, keywords, options, limit, offset, filters
-   - **ParseResult** - success, items, error, metadata, total, nextOffset
+   - **ParseRequestDTO** - source, type, keywords, options, limit, offset, filters
+   - **ParseResultDTO** - success, items, error, metadata, total, nextOffset
 
 ### From Previous Issues
 
@@ -135,7 +135,7 @@ if (in_array($status, $retryableStatuses) && $attempt < $maxRetries) {
 
 **DTO Pattern:**
 ```php
-readonly class ParseRequest {
+readonly class ParseRequestDTO {
     public function __construct(
         public string $source,
         public string $type,
@@ -194,8 +194,8 @@ readonly class ParseRequest {
 - [ ] `app/Services/Parser/Support/HttpClient.php` - HTTP with retry logic
 - [ ] `app/Services/Parser/Support/ContentExtractor.php` - HTML/content processing
 - [ ] `app/Services/Parser/Support/RateLimiter.php` - Rate limiting
-- [ ] `app/DTOs/Parser/ParseRequest.php` - Request DTO
-- [ ] `app/DTOs/Parser/ParseResult.php` - Result DTO
+- [ ] `app/DTOs/Parser/ParseRequestDTO.php` - Request DTO
+- [ ] `app/DTOs/Parser/ParseResultDTO.php` - Result DTO
 - [ ] `config/parser.php` - Parser configuration
 - [ ] `tests/Unit/Services/Parser/AbstractParserTest.php`
 - [ ] `tests/Unit/Services/Parser/ParserManagerTest.php`
@@ -232,7 +232,7 @@ Service Provider:
 
 **Phase 3: API**
 - [ ] `app/Http/Controllers/Api/ParserController.php` - Parser API endpoints
-- [ ] `app/Http/Requests/Parser/ParseRequestValidation.php` - Validation
+- [ ] `app/Http/Requests/Parser/ExecuteParserRequest.php` - Validation
 - [ ] `app/Http/Resources/Parser/ParserResource.php` - Parser details
 - [ ] `app/Http/Resources/Parser/ParserCollectionResource.php` - Parser list
 - [ ] `app/Http/Resources/Parser/ParseResultResource.php` - Parse results
@@ -270,7 +270,7 @@ GET    /api/parsers/{parser}/types - Get supported types
 
 **AbstractParser:**
 - [ ] Write test: parser loads configuration from config/parser.php
-- [ ] Write test: parser validates ParseRequest DTO
+- [ ] Write test: parser validates ParseRequestDTO
 - [ ] Write test: parser handles errors gracefully with try/catch
 - [ ] Write test: parser processes items through pipeline
 - [ ] Write test: parser supports pagination via offset/limit
@@ -305,13 +305,13 @@ GET    /api/parsers/{parser}/types - Get supported types
 - [ ] All tests passing ✅
 
 **DTOs:**
-- [ ] Write test: ParseRequest::fromArray() factory method
-- [ ] Write test: ParseRequest::toArray() serialization
-- [ ] Write test: ParseRequest type safety (readonly properties)
-- [ ] Write test: ParseResult construction with required fields
-- [ ] Write test: ParseResult handles null error field
-- [ ] Write test: ParseResult pagination (nextOffset)
-- [ ] Implement ParseRequest and ParseResult DTOs
+- [ ] Write test: ParseRequestDTO::fromArray() factory method
+- [ ] Write test: ParseRequestDTO::toArray() serialization
+- [ ] Write test: ParseRequestDTO type safety (readonly properties)
+- [ ] Write test: ParseResultDTO construction with required fields
+- [ ] Write test: ParseResultDTO handles null error field
+- [ ] Write test: ParseResultDTO pagination (nextOffset)
+- [ ] Implement ParseRequestDTO and ParseResultDTO
 - [ ] All tests passing ✅
 
 **ParserManager:**
@@ -446,7 +446,7 @@ GET    /api/parsers/{parser}/types - Get supported types
 - [ ] Test resource transformations
 
 **Validation:**
-- [ ] Create ParseRequestValidation FormRequest
+- [ ] Create ExecuteParserRequest FormRequest
 - [ ] Validate required fields: parser, source, type
 - [ ] Validate optional fields: keywords, options, limit, offset, filters
 - [ ] Custom validation rules per parser type
@@ -458,8 +458,8 @@ GET    /api/parsers/{parser}/types - Get supported types
 
 **Documentation:**
 - [ ] Update docs/API.md with parser endpoints
-- [ ] Add OpenAPI schemas for ParseRequest
-- [ ] Add OpenAPI schemas for ParseResult
+- [ ] Add OpenAPI schemas for ParseRequestDTO
+- [ ] Add OpenAPI schemas for ParseResultDTO
 - [ ] Document authentication flows
 - [ ] Generate Swagger docs: `sail artisan l5-swagger:generate`
 - [ ] Verify docs at https://dev.parser2.local/api/documentation
@@ -558,8 +558,8 @@ tests/
 ├── Unit/
 │   ├── DTOs/
 │   │   └── Parser/
-│   │       ├── ParseRequestTest.php
-│   │       └── ParseResultTest.php
+│   │       ├── ParseRequestDTOTest.php
+│   │       └── ParseResultDTOTest.php
 │   └── Services/
 │       └── Parser/
 │           ├── AbstractParserTest.php
@@ -668,7 +668,7 @@ sail artisan test tests/Feature/Api/ParserApiTest         # Phase 3 API
 **Backend Standards:**
 - [ ] Controllers are thin (ParserController only handles HTTP concerns)
 - [ ] Business logic in services (all parsers extend AbstractParser)
-- [ ] DTOs used for data transfer (ParseRequest, ParseResult)
+- [ ] DTOs used for data transfer (ParseRequestDTO, ParseResultDTO)
 - [ ] Dependency injection used (ParserManager injected into controller)
 - [ ] Naming follows conventions (FeedsParser, not FeedParser or FeedsService)
 
@@ -709,7 +709,7 @@ Track documentation that needs updating:
   - Authentication requirements
 
 - [ ] **docs/TODO.md** - Mark parser implementation tasks complete
-  - ✅ Define core DTO structure (ParseRequest, ParseResult)
+  - ✅ Define core DTO structure (ParseRequestDTO, ParseResultDTO)
   - ✅ Setup service layer structure (ParserManager + parsers)
   - ✅ Implement ParsingService (via parsers)
   - Update sprint metrics (DTOs Created, Services Created, API Endpoints)
@@ -723,7 +723,7 @@ Track documentation that needs updating:
   - [0.2.0] - 2025-11-XX
   - Added: 8 standalone parsers (Feeds, Reddit, Single, Telegram, Medium, Bing, Multi, Craigslist)
   - Added: Parser API endpoints (list, show, parse, types)
-  - Added: ParseRequest and ParseResult DTOs
+  - Added: ParseRequestDTO and ParseResultDTO
   - Added: ParserManager service for parser registration/invocation
 
 - [ ] **config/parser.php** - Create complete parser configuration
