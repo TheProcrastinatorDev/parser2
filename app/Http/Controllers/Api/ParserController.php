@@ -28,7 +28,7 @@ class ParserController extends Controller
      * Execute a parse request.
      *
      * @OA\Post(
-     *     path="/parsers/parse",
+     *     path="/api/parsers/parse",
      *     summary="Execute a parse request",
      *     description="Parse content from a source using the specified parser type",
      *     tags={"Parsers"},
@@ -58,9 +58,13 @@ class ParserController extends Controller
      * @OA\Property(property="success", type="boolean", example=true),
      * @OA\Property(property="data", type="object",
      * @OA\Property(property="items", type="array", @OA\Items(type="object")),
-     * @OA\Property(property="metadata", type="object"),
-     * @OA\Property(property="total", type="integer"),
-     * @OA\Property(property="next_offset", type="integer")
+     * @OA\Property(property="metadata", type="object",
+     * @OA\Property(property="parser", type="string", example="reddit"),
+     * @OA\Property(property="source", type="string", example="https://reddit.com/r/programming.json"),
+     * @OA\Property(property="type", type="string", example="reddit"),
+     * @OA\Property(property="total", type="integer", example=25),
+     * @OA\Property(property="next_offset", type="integer", example=10, nullable=true)
+     *                 )
      *             )
      *         )
      *     ),
@@ -100,7 +104,7 @@ class ParserController extends Controller
      * List all available parsers.
      *
      * @OA\Get(
-     *     path="/parsers",
+     *     path="/api/parsers",
      *     summary="List available parsers",
      *     description="Get a list of all available parser types and their descriptions",
      *     tags={"Parsers"},
@@ -140,7 +144,7 @@ class ParserController extends Controller
      * Get parser details by name.
      *
      * @OA\Get(
-     *     path="/parsers/{name}",
+     *     path="/api/parsers/{name}",
      *     summary="Get parser details",
      *     description="Get detailed information about a specific parser",
      *     tags={"Parsers"},
@@ -190,7 +194,7 @@ class ParserController extends Controller
      * Execute batch parse requests.
      *
      * @OA\Post(
-     *     path="/parsers/batch",
+     *     path="/api/parsers/batch",
      *     summary="Execute batch parse requests",
      *     description="Parse multiple sources in a single batch request (max 100)",
      *     tags={"Parsers"},
