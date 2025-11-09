@@ -9,12 +9,12 @@ readonly class ParseResultDTO
     /**
      * Create a new ParseResultDTO instance.
      *
-     * @param bool $success Whether the parsing was successful
-     * @param array<int, array<string, mixed>> $items Parsed items
-     * @param string|null $error Error message if parsing failed
-     * @param array<string, mixed> $metadata Additional metadata about the parsing
-     * @param int|null $total Total number of items available
-     * @param int|null $nextOffset Offset for the next page (if paginated)
+     * @param  bool  $success  Whether the parsing was successful
+     * @param  array<int, array<string, mixed>>  $items  Parsed items
+     * @param  string|null  $error  Error message if parsing failed
+     * @param  array<string, mixed>  $metadata  Additional metadata about the parsing
+     * @param  int|null  $total  Total number of items available
+     * @param  int|null  $nextOffset  Offset for the next page (if paginated)
      */
     public function __construct(
         public bool $success,

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\DTOs\Parser\ParseRequestDTO;
 use App\Exceptions\ParserNotFoundException;
 use App\Services\Parser\AbstractParser;
 use App\Services\Parser\ParserManager;
-use App\DTOs\Parser\ParseRequestDTO;
 
 // Test parser implementations
 class MockParser1 extends AbstractParser
@@ -38,11 +38,11 @@ uses(Tests\TestCase::class);
 
 describe('ParserManager', function () {
     beforeEach(function () {
-        $this->manager = new ParserManager();
+        $this->manager = new ParserManager;
     });
 
     it('registers parser with string key', function () {
-        $parser = new MockParser1();
+        $parser = new MockParser1;
 
         $this->manager->register('test_parser', $parser);
 
@@ -50,7 +50,7 @@ describe('ParserManager', function () {
     });
 
     it('gets parser by name returns correct instance', function () {
-        $parser = new MockParser1();
+        $parser = new MockParser1;
 
         $this->manager->register('test_parser', $parser);
         $retrieved = $this->manager->get('test_parser');
@@ -60,8 +60,8 @@ describe('ParserManager', function () {
     });
 
     it('lists all registered parsers', function () {
-        $parser1 = new MockParser1();
-        $parser2 = new MockParser2();
+        $parser1 = new MockParser1;
+        $parser2 = new MockParser2;
 
         $this->manager->register('parser1', $parser1);
         $this->manager->register('parser2', $parser2);
@@ -75,8 +75,8 @@ describe('ParserManager', function () {
     });
 
     it('returns parser names', function () {
-        $parser1 = new MockParser1();
-        $parser2 = new MockParser2();
+        $parser1 = new MockParser1;
+        $parser2 = new MockParser2;
 
         $this->manager->register('parser1', $parser1);
         $this->manager->register('parser2', $parser2);
@@ -92,8 +92,8 @@ describe('ParserManager', function () {
     });
 
     it('throws exception on duplicate registration', function () {
-        $parser1 = new MockParser1();
-        $parser2 = new MockParser2();
+        $parser1 = new MockParser1;
+        $parser2 = new MockParser2;
 
         $this->manager->register('test', $parser1);
 
@@ -104,7 +104,7 @@ describe('ParserManager', function () {
     });
 
     it('checks if parser exists', function () {
-        $parser = new MockParser1();
+        $parser = new MockParser1;
 
         expect($this->manager->has('test'))->toBeFalse();
 
@@ -116,17 +116,17 @@ describe('ParserManager', function () {
     it('returns parser count', function () {
         expect($this->manager->count())->toBe(0);
 
-        $this->manager->register('parser1', new MockParser1());
+        $this->manager->register('parser1', new MockParser1);
 
         expect($this->manager->count())->toBe(1);
 
-        $this->manager->register('parser2', new MockParser2());
+        $this->manager->register('parser2', new MockParser2);
 
         expect($this->manager->count())->toBe(2);
     });
 
     it('allows removing registered parser', function () {
-        $parser = new MockParser1();
+        $parser = new MockParser1;
         $this->manager->register('test', $parser);
 
         expect($this->manager->has('test'))->toBeTrue();
@@ -137,7 +137,7 @@ describe('ParserManager', function () {
     });
 
     it('returns parser details for listing', function () {
-        $parser = new MockParser1();
+        $parser = new MockParser1;
         $this->manager->register('test_parser', $parser);
 
         $details = $this->manager->getDetails('test_parser');
@@ -150,8 +150,8 @@ describe('ParserManager', function () {
     });
 
     it('returns all parser details', function () {
-        $this->manager->register('parser1', new MockParser1());
-        $this->manager->register('parser2', new MockParser2());
+        $this->manager->register('parser1', new MockParser1);
+        $this->manager->register('parser2', new MockParser2);
 
         $allDetails = $this->manager->getAllDetails();
 

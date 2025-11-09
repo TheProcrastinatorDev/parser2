@@ -22,6 +22,7 @@ class FeedsParser extends AbstractParser
      * Parse feed content.
      *
      * @return array<int, array<string, mixed>>
+     *
      * @throws Exception
      */
     protected function doParse(ParseRequestDTO $request): array
@@ -83,13 +84,14 @@ class FeedsParser extends AbstractParser
      * Parse RSS 2.0 feed.
      *
      * @return array<int, array<string, mixed>>
+     *
      * @throws Exception
      */
     private function parseRssFeed(string $content): array
     {
         libxml_use_internal_errors(true);
 
-        $xml = new DOMDocument();
+        $xml = new DOMDocument;
         if (! $xml->loadXML($content)) {
             $errors = libxml_get_errors();
             libxml_clear_errors();
@@ -131,13 +133,14 @@ class FeedsParser extends AbstractParser
      * Parse Atom feed.
      *
      * @return array<int, array<string, mixed>>
+     *
      * @throws Exception
      */
     private function parseAtomFeed(string $content): array
     {
         libxml_use_internal_errors(true);
 
-        $xml = new DOMDocument();
+        $xml = new DOMDocument;
         if (! $xml->loadXML($content)) {
             $errors = libxml_get_errors();
             libxml_clear_errors();
@@ -180,6 +183,7 @@ class FeedsParser extends AbstractParser
      * Parse JSON feed.
      *
      * @return array<int, array<string, mixed>>
+     *
      * @throws Exception
      */
     private function parseJsonFeed(string $content): array

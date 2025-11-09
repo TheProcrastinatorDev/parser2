@@ -38,7 +38,7 @@ uses(Tests\TestCase::class);
 
 describe('AbstractParser', function () {
     beforeEach(function () {
-        $this->parser = new TestParser();
+        $this->parser = new TestParser;
     });
 
     it('loads configuration from config file', function () {

@@ -92,6 +92,7 @@ class ParserManager
      * Get details about a specific parser.
      *
      * @return array<string, mixed>
+     *
      * @throws ParserNotFoundException
      */
     public function getDetails(string $name): array

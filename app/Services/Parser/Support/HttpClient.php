@@ -18,7 +18,8 @@ class HttpClient
     /**
      * Perform HTTP GET request with retry logic and user-agent rotation.
      *
-     * @param array<string, string> $headers
+     * @param  array<string, string>  $headers
+     *
      * @throws Exception
      */
     public function get(string $url, array $headers = []): string
@@ -29,7 +30,8 @@ class HttpClient
     /**
      * Perform HTTP request with retry logic.
      *
-     * @param array<string, string> $headers
+     * @param  array<string, string>  $headers
+     *
      * @throws Exception
      */
     private function request(string $method, string $url, array $headers = [], int $attempt = 0): string

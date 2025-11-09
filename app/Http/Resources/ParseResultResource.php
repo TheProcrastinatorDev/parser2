@@ -14,21 +14,38 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ParseResultResource extends JsonResource
 {
     /**
+     * Disable automatic wrapping of the resource in a data key.
+     *
+     * @var string|null
+     */
+    public static $wrap = null;
+
+    /**
      * Transform the resource into an array.
      *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
     {
+        if (! $this->success) {
+            return [
+                'success' => false,
+                'error' => $this->error,
+            ];
+        }
+
+        // Merge pagination info into metadata
+        $metadata = array_merge($this->metadata ?? [], [
+            'total' => $this->total,
+            'next_offset' => $this->nextOffset,
+        ]);
+
         return [
-            'success' => $this->success,
-            'data' => $this->when($this->success, [
+            'success' => true,
+            'data' => [
                 'items' => $this->items,
-                'metadata' => $this->metadata,
-                'total' => $this->total,
-                'next_offset' => $this->nextOffset,
-            ]),
-            'error' => $this->when(! $this->success, $this->error),
+                'metadata' => $metadata,
+            ],
         ];
     }
 }

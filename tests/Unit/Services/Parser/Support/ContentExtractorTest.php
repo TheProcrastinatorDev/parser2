@@ -8,7 +8,7 @@ uses(Tests\TestCase::class);
 
 describe('ContentExtractor', function () {
     beforeEach(function () {
-        $this->extractor = new ContentExtractor();
+        $this->extractor = new ContentExtractor;
     });
 
     it('extracts images from html content', function () {

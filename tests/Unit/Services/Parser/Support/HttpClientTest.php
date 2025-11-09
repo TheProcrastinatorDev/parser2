@@ -9,7 +9,7 @@ uses(Tests\TestCase::class);
 
 describe('HttpClient', function () {
     beforeEach(function () {
-        $this->client = new HttpClient();
+        $this->client = new HttpClient;
     });
 
     it('successfully performs http get request', function () {

@@ -10,7 +10,7 @@ uses(Tests\TestCase::class);
 describe('RateLimiter', function () {
     beforeEach(function () {
         Cache::flush();
-        $this->limiter = new RateLimiter();
+        $this->limiter = new RateLimiter;
     });
 
     it('allows requests within per-minute limit', function () {

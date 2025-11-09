@@ -11,28 +11,12 @@ use App\Http\Requests\BatchParseRequest;
 use App\Http\Requests\ParseRequest;
 use App\Http\Resources\ParserCollection;
 use App\Http\Resources\ParserDetailsResource;
-use App\Http\Resources\ParserListResource;
 use App\Http\Resources\ParseResultResource;
+use App\Http\Resources\ParserListResource;
 use App\Services\Parser\ParserManager;
 use App\Services\Parser\Support\RateLimiter;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-/**
- * @OA\Info(
- *     title="Parser2 API",
- *     version="1.0.0",
- *     description="Advanced parsing, processing, normalization, and categorization of data from multiple sources",
- * @OA\Contact(
- *         email="support@parser2.local"
- *     )
- * )
- *
- * @OA\Server(
- *     url="https://dev.parser2.local/api",
- *     description="Development Server"
- * )
- */
 class ParserController extends Controller
 {
     public function __construct(
@@ -48,10 +32,13 @@ class ParserController extends Controller
      *     summary="Execute a parse request",
      *     description="Parse content from a source using the specified parser type",
      *     tags={"Parsers"},
+     *
      * @OA\RequestBody(
      *         required=true,
+     *
      * @OA\JsonContent(
      *             required={"source", "type"},
+     *
      * @OA\Property(property="source", type="string", example="https://reddit.com/r/programming.json", description="Source URL or identifier to parse"),
      * @OA\Property(property="type", type="string", enum={"feeds", "reddit", "single_page", "telegram", "medium", "bing", "multi", "craigslist"}, example="reddit", description="Parser type to use"),
      * @OA\Property(property="keywords", type="array", @OA\Items(type="string"), example={"php", "laravel"}, description="Optional keywords for search-based parsers"),
@@ -61,10 +48,13 @@ class ParserController extends Controller
      * @OA\Property(property="filters", type="object", description="Additional filters")
      *         )
      *     ),
+     *
      * @OA\Response(
      *         response=200,
      *         description="Parse result",
+     *
      * @OA\JsonContent(
+     *
      * @OA\Property(property="success", type="boolean", example=true),
      * @OA\Property(property="data", type="object",
      * @OA\Property(property="items", type="array", @OA\Items(type="object")),
@@ -74,6 +64,7 @@ class ParserController extends Controller
      *             )
      *         )
      *     ),
+     *
      * @OA\Response(response=422, description="Validation error"),
      * @OA\Response(response=429, description="Rate limit exceeded")
      * )
@@ -113,13 +104,18 @@ class ParserController extends Controller
      *     summary="List available parsers",
      *     description="Get a list of all available parser types and their descriptions",
      *     tags={"Parsers"},
+     *
      * @OA\Response(
      *         response=200,
      *         description="List of available parsers",
+     *
      * @OA\JsonContent(
+     *
      * @OA\Property(property="success", type="boolean", example=true),
      * @OA\Property(property="data", type="array",
+     *
      * @OA\Items(
+     *
      * @OA\Property(property="name", type="string", example="reddit"),
      * @OA\Property(property="description", type="string", example="Parser for reddit sources")
      *                 )
@@ -148,17 +144,22 @@ class ParserController extends Controller
      *     summary="Get parser details",
      *     description="Get detailed information about a specific parser",
      *     tags={"Parsers"},
+     *
      * @OA\Parameter(
      *         name="name",
      *         in="path",
      *         required=true,
      *         description="Parser name",
+     *
      * @OA\Schema(type="string", enum={"feeds", "reddit", "single_page", "telegram", "medium", "bing", "multi", "craigslist"})
      *     ),
+     *
      * @OA\Response(
      *         response=200,
      *         description="Parser details",
+     *
      * @OA\JsonContent(
+     *
      * @OA\Property(property="success", type="boolean", example=true),
      * @OA\Property(property="data", type="object",
      * @OA\Property(property="name", type="string", example="reddit"),
@@ -167,6 +168,7 @@ class ParserController extends Controller
      *             )
      *         )
      *     ),
+     *
      * @OA\Response(response=404, description="Parser not found")
      * )
      */
@@ -192,12 +194,17 @@ class ParserController extends Controller
      *     summary="Execute batch parse requests",
      *     description="Parse multiple sources in a single batch request (max 100)",
      *     tags={"Parsers"},
+     *
      * @OA\RequestBody(
      *         required=true,
+     *
      * @OA\JsonContent(
      *             required={"requests"},
+     *
      * @OA\Property(property="requests", type="array",
+     *
      * @OA\Items(
+     *
      * @OA\Property(property="source", type="string", example="https://example.com"),
      * @OA\Property(property="type", type="string", example="single_page"),
      * @OA\Property(property="keywords", type="array", @OA\Items(type="string")),
@@ -209,10 +216,13 @@ class ParserController extends Controller
      *             )
      *         )
      *     ),
+     *
      * @OA\Response(
      *         response=200,
      *         description="Batch parse results",
+     *
      * @OA\JsonContent(
+     *
      * @OA\Property(property="success", type="boolean", example=true),
      * @OA\Property(property="data", type="object",
      * @OA\Property(property="results", type="array", @OA\Items(type="object")),
@@ -224,6 +234,7 @@ class ParserController extends Controller
      *             )
      *         )
      *     ),
+     *
      * @OA\Response(response=422, description="Validation error")
      * )
      */

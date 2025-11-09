@@ -9,13 +9,13 @@ readonly class ParseRequestDTO
     /**
      * Create a new ParseRequestDTO instance.
      *
-     * @param string $source The URL or source to parse
-     * @param string $type The type of parsing (rss, atom, json, html, etc.)
-     * @param array<int, string> $keywords Keywords to search for (optional)
-     * @param array<string, mixed> $options Additional parser-specific options
-     * @param int|null $limit Maximum number of items to return
-     * @param int|null $offset Offset for pagination
-     * @param array<string, mixed> $filters Additional filters to apply
+     * @param  string  $source  The URL or source to parse
+     * @param  string  $type  The type of parsing (rss, atom, json, html, etc.)
+     * @param  array<int, string>  $keywords  Keywords to search for (optional)
+     * @param  array<string, mixed>  $options  Additional parser-specific options
+     * @param  int|null  $limit  Maximum number of items to return
+     * @param  int|null  $offset  Offset for pagination
+     * @param  array<string, mixed>  $filters  Additional filters to apply
      */
     public function __construct(
         public string $source,
@@ -30,7 +30,7 @@ readonly class ParseRequestDTO
     /**
      * Create instance from array.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public static function fromArray(array $data): self
     {

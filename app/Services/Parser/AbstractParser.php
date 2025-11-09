@@ -67,7 +67,7 @@ abstract class AbstractParser
     /**
      * Apply pagination to items.
      *
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      * @return array<int, array<string, mixed>>
      */
     protected function applyPagination(array $items, ParseRequestDTO $request): array

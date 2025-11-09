@@ -19,6 +19,7 @@ class RedditParser extends AbstractParser
      * Parse Reddit JSON content.
      *
      * @return array<int, array<string, mixed>>
+     *
      * @throws Exception
      */
     protected function doParse(ParseRequestDTO $request): array

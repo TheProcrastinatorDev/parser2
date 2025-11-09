@@ -71,7 +71,7 @@ class CraigslistParser extends AbstractParser
     {
         libxml_use_internal_errors(true);
 
-        $dom = new DOMDocument();
+        $dom = new DOMDocument;
         // Add UTF-8 meta tag to ensure proper encoding
         $html = '<?xml encoding="UTF-8">'.$html;
         $dom->loadHTML($html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
