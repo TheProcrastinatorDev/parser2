@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api;
 
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class ParserControllerTest extends TestCase
@@ -11,6 +12,13 @@ class ParserControllerTest extends TestCase
     /** @test */
     public function it_executes_a_parse_request(): void
     {
+        Http::fake([
+            'example.com/*' => Http::response(
+                file_get_contents(__DIR__.'/../../Fixtures/Http/example-page.html'),
+                200
+            ),
+        ]);
+
         $response = $this->postJson('/api/parsers/parse', [
             'source' => 'https://example.com/test',
             'type' => 'single_page',
@@ -53,6 +61,10 @@ class ParserControllerTest extends TestCase
     /** @test */
     public function it_returns_error_for_failed_parse(): void
     {
+        Http::fake([
+            'nonexistent-domain-12345.com/*' => Http::response('', 404),
+        ]);
+
         $response = $this->postJson('/api/parsers/parse', [
             'source' => 'https://nonexistent-domain-12345.com',
             'type' => 'single_page',
@@ -135,6 +147,13 @@ class ParserControllerTest extends TestCase
     /** @test */
     public function it_executes_batch_parse_requests(): void
     {
+        Http::fake([
+            'example.com/*' => Http::response(
+                file_get_contents(__DIR__.'/../../Fixtures/Http/example-page.html'),
+                200
+            ),
+        ]);
+
         $response = $this->postJson('/api/parsers/batch', [
             'requests' => [
                 [
@@ -222,6 +241,13 @@ class ParserControllerTest extends TestCase
     /** @test */
     public function it_accepts_parse_request_with_all_optional_fields(): void
     {
+        Http::fake([
+            'example.com/*' => Http::response(
+                file_get_contents(__DIR__.'/../../Fixtures/Http/example-page.html'),
+                200
+            ),
+        ]);
+
         $response = $this->postJson('/api/parsers/parse', [
             'source' => 'https://example.com',
             'type' => 'single_page',
@@ -247,6 +273,14 @@ class ParserControllerTest extends TestCase
     /** @test */
     public function it_returns_pagination_metadata_in_parse_response(): void
     {
+        Http::fake([
+            'reddit.com/*' => Http::response(
+                file_get_contents(__DIR__.'/../../Fixtures/Http/reddit-programming.json'),
+                200,
+                ['Content-Type' => 'application/json']
+            ),
+        ]);
+
         $response = $this->postJson('/api/parsers/parse', [
             'source' => 'https://reddit.com/r/programming.json',
             'type' => 'reddit',
@@ -269,6 +303,13 @@ class ParserControllerTest extends TestCase
     /** @test */
     public function it_handles_rate_limiting(): void
     {
+        Http::fake([
+            'example.com/*' => Http::response(
+                file_get_contents(__DIR__.'/../../Fixtures/Http/example-page.html'),
+                200
+            ),
+        ]);
+
         // Configure low rate limit for testing
         config(['parser.parsers.single_page.rate_limit_per_minute' => 2]);
 
