@@ -17,10 +17,13 @@ class HealthController extends Controller
      *     tags={"System"},
      *     summary="Check API health status",
      *     description="Returns the current health status of the API",
+     *
      *     @OA\Response(
      *         response=200,
      *         description="API is healthy",
+     *
      *         @OA\JsonContent(
+     *
      *             @OA\Property(property="status", type="string", example="ok"),
      *             @OA\Property(property="timestamp", type="string", format="date-time", example="2025-01-01T12:00:00Z"),
      *             @OA\Property(property="version", type="string", example="1.0.0")

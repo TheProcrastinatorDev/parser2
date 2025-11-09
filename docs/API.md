@@ -586,7 +586,7 @@ Content-Disposition: attachment; filename="results-2025-11-08.json"
 
 ### Parsers
 
-Information about available parsers.
+Parser execution and management endpoints.
 
 #### List Parsers
 
@@ -601,28 +601,269 @@ List all registered parsers and their capabilities.
   "success": true,
   "data": [
     {
-      "type": "feeds",
-      "name": "RSS/Atom Feed Parser",
-      "description": "Parses RSS and Atom feeds",
-      "configuration_schema": {
-        "max_items": "integer",
-        "refresh_interval": "integer"
-      },
-      "supported": true
+      "name": "feeds",
+      "description": "Parser for feeds sources"
     },
     {
-      "type": "telegram",
-      "name": "Telegram Channel Parser",
-      "description": "Extracts messages from Telegram channels",
-      "configuration_schema": {
-        "channel_url": "string",
-        "max_messages": "integer"
-      },
-      "supported": true
+      "name": "reddit",
+      "description": "Parser for reddit sources"
+    },
+    {
+      "name": "single_page",
+      "description": "Parser for single_page sources"
+    },
+    {
+      "name": "telegram",
+      "description": "Parser for telegram sources"
+    },
+    {
+      "name": "medium",
+      "description": "Parser for medium sources"
+    },
+    {
+      "name": "bing",
+      "description": "Parser for bing sources"
+    },
+    {
+      "name": "multi",
+      "description": "Parser for multi sources"
+    },
+    {
+      "name": "craigslist",
+      "description": "Parser for craigslist sources"
     }
   ]
 }
 ```
+
+#### Get Parser Details
+
+`GET /api/parsers/{name}`
+
+Get detailed information about a specific parser.
+
+**Path Parameters:**
+
+| Parameter | Type | Description | Required |
+|-----------|------|-------------|----------|
+| name | string | Parser name (feeds, reddit, single_page, telegram, medium, bing, multi, craigslist) | Yes |
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "name": "reddit",
+    "description": "Parser for reddit sources",
+    "config": {}
+  }
+}
+```
+
+**Response (404 Not Found):**
+
+```json
+{
+  "success": false,
+  "error": "Parser 'unknown' not found"
+}
+```
+
+#### Execute Parse Request
+
+`POST /api/parsers/parse`
+
+Execute a parse request with the specified parser.
+
+**Request Body:**
+
+```json
+{
+  "source": "https://reddit.com/r/programming.json",
+  "type": "reddit",
+  "keywords": ["php", "laravel"],
+  "options": {
+    "extract_method": "css",
+    "clean_html": true
+  },
+  "limit": 10,
+  "offset": 0,
+  "filters": {}
+}
+```
+
+**Required Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| source | string | Source URL or identifier to parse |
+| type | string | Parser type (feeds, reddit, single_page, telegram, medium, bing, multi, craigslist) |
+
+**Optional Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| keywords | array | Keywords for search-based parsers |
+| options | object | Parser-specific options |
+| limit | integer | Maximum number of items to return |
+| offset | integer | Offset for pagination |
+| filters | object | Additional filters |
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "title": "Best Laravel practices in 2025",
+        "url": "https://reddit.com/r/programming/comments/abc123",
+        "content": "Post content...",
+        "author": "user123",
+        "published_at": "2025-11-08T10:00:00Z",
+        "metadata": {
+          "score": 245,
+          "comments": 32
+        }
+      }
+    ],
+    "metadata": {
+      "parser": "reddit",
+      "source": "https://reddit.com/r/programming.json",
+      "type": "reddit",
+      "total": 25,
+      "next_offset": 10
+    }
+  }
+}
+```
+
+**Response (422 Unprocessable Entity - Validation Error):**
+
+```json
+{
+  "success": false,
+  "message": "The source field is required.",
+  "errors": {
+    "source": ["The source field is required."],
+    "type": ["The type field is required."]
+  }
+}
+```
+
+**Response (429 Too Many Requests - Rate Limit Exceeded):**
+
+```json
+{
+  "success": false,
+  "error": "Rate limit exceeded. Please try again later.",
+  "retry_after": 45
+}
+```
+
+**Response (500 Internal Server Error - Parse Failed):**
+
+```json
+{
+  "success": false,
+  "error": "HTTP connection failed after 3 retries: cURL error 6: Could not resolve host"
+}
+```
+
+#### Batch Parse Requests
+
+`POST /api/parsers/batch`
+
+Execute multiple parse requests in a single batch (max 100 requests).
+
+**Request Body:**
+
+```json
+{
+  "requests": [
+    {
+      "source": "https://example.com/page1",
+      "type": "single_page"
+    },
+    {
+      "source": "https://reddit.com/r/php.json",
+      "type": "reddit",
+      "limit": 5
+    },
+    {
+      "source": "https://techcrunch.com/feed",
+      "type": "feeds"
+    }
+  ]
+}
+```
+
+**Required Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| requests | array | Array of parse request objects (max 100) |
+
+Each request object follows the same structure as the single parse request.
+
+**Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "data": {
+    "results": [
+      {
+        "success": true,
+        "data": {
+          "items": [...],
+          "metadata": {...},
+          "total": 10,
+          "next_offset": null
+        },
+        "error": null
+      },
+      {
+        "success": false,
+        "data": null,
+        "error": "HTTP connection failed"
+      }
+    ],
+    "summary": {
+      "total": 3,
+      "successful": 2,
+      "failed": 1
+    }
+  }
+}
+```
+
+**Response (422 Unprocessable Entity - Validation Error):**
+
+```json
+{
+  "success": false,
+  "message": "The requests field must be an array.",
+  "errors": {
+    "requests": ["The requests field must be an array."]
+  }
+}
+```
+
+**Available Parsers:**
+
+| Parser | Type | Description | Source Format |
+|--------|------|-------------|---------------|
+| Feeds | `feeds` | RSS/Atom/JSON feeds | Feed URL |
+| Reddit | `reddit` | Reddit subreddit JSON | Subreddit .json URL |
+| Single Page | `single_page` | Single webpage extraction | Webpage URL |
+| Telegram | `telegram` | Telegram channel messages | t.me/s/channel_name URL |
+| Medium | `medium` | Medium articles | Medium article URL |
+| Bing Search | `bing` | Bing search results | Search query string |
+| Multi URL | `multi` | Batch URL parsing | JSON array/CSV/newline-separated URLs |
+| Craigslist | `craigslist` | Craigslist listings | Craigslist search URL |
 
 ---
 
