@@ -9,6 +9,7 @@ use App\Exceptions\ParserNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BatchParseRequest;
 use App\Http\Requests\ParseRequest;
+use App\Http\Resources\ParserCollection;
 use App\Http\Resources\ParserDetailsResource;
 use App\Http\Resources\ParserListResource;
 use App\Http\Resources\ParseResultResource;
@@ -127,14 +128,16 @@ class ParserController extends Controller
      *     )
      * )
      */
-    public function index(): AnonymousResourceCollection
+    public function index(): ParserCollection
     {
         $parsers = [];
         foreach ($this->parserManager->names() as $name) {
             $parsers[] = $this->parserManager->getDetails($name);
         }
 
-        return ParserListResource::collection(collect($parsers));
+        return new ParserCollection(
+            ParserListResource::collection(collect($parsers))
+        );
     }
 
     /**

@@ -17,9 +17,12 @@ class ParserDetailsResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'name' => $this->resource['name'],
-            'description' => $this->resource['description'] ?? "Parser for {$this->resource['name']} sources",
-            'config' => $this->resource['config'] ?? [],
+            'success' => true,
+            'data' => [
+                'name' => $this->resource['name'],
+                'description' => $this->resource['description'] ?? "Parser for {$this->resource['name']} sources",
+                'config' => $this->resource['config'] ?? [],
+            ],
         ];
     }
 }
